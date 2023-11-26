@@ -1,0 +1,79 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Keych API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/execute-message": {
+            "post": {
+                "summary": "Execute a message",
+                "description": "Accepts different types of messages based on the provided schema",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "minter_code_info": {
+                                        "description": "minter code info",
+                                        "allOf": [
+                                            {
+                                                "$ref": "#/components/schemas/CodeInfo"
+                                            }
+                                        ]
+                                    },
+                                    "collection_code_info": {
+                                        "description": "collection code info",
+                                        "allOf": [
+                                            {
+                                                "$ref": "#/components/schemas/CodeInfo"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "minter_code_info",
+                                    "collection_code_info"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Message processed successfully"
+                    },
+                    "default": {
+                        "description": "An error occurred"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CodeInfo": {
+                "description": "Info needed to instantiate a contract",
+                "type": "object",
+                "required": [
+                    "code_id",
+                    "code_hash"
+                ],
+                "properties": {
+                    "code_id": {
+                        "description": "code id of the stored contract",
+                        "type": "integer",
+                        "format": "uint64",
+                        "minimum": 0.0
+                    },
+                    "code_hash": {
+                        "description": "code hash of the stored contract",
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

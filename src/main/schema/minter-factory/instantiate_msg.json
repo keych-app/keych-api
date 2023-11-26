@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "InstantiateMsg",
+  "description": "Instantiation message",
+  "type": "object",
+  "required": [
+    "minter_code_info",
+    "collection_code_info"
+  ],
+  "properties": {
+    "minter_code_info": {
+      "description": "minter code info",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CodeInfo"
+        }
+      ]
+    },
+    "collection_code_info": {
+      "description": "collection code info",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CodeInfo"
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "CodeInfo": {
+      "description": "Info needed to instantiate a contract",
+      "type": "object",
+      "required": [
+        "code_id",
+        "code_hash"
+      ],
+      "properties": {
+        "code_id": {
+          "description": "code id of the stored contract",
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0.0
+        },
+        "code_hash": {
+          "description": "code hash of the stored contract",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,337 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Keych API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/execute-message": {
+            "post": {
+                "summary": "Execute a message",
+                "description": "Accepts different types of messages based on the provided schema",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "oneOf": [
+                                    {
+                                        "description": "lists all collections whose owner is the given address.",
+                                        "type": "object",
+                                        "required": [
+                                            "list_my_collections"
+                                        ],
+                                        "properties": {
+                                            "list_my_collections": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "address": {
+                                                        "description": "address whose activity to display",
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "filter": {
+                                                        "description": "optional filter for only active or inactive offspring.  If not specified, lists all",
+                                                        "default": null,
+                                                        "anyOf": [
+                                                            {
+                                                                "$ref": "#/components/schemas/FilterTypes"
+                                                            },
+                                                            {
+                                                                "type": "null"
+                                                            }
+                                                        ]
+                                                    },
+                                                    "page_size": {
+                                                        "description": "optional number of offspring to return in this page (applies to both active and inactive). Default: DEFAULT_PAGE_SIZE",
+                                                        "default": null,
+                                                        "type": "integer",
+                                                        "format": "uint32",
+                                                        "minimum": 0.0,
+                                                        "nullable": true
+                                                    },
+                                                    "permit": {
+                                                        "description": "permit used to validate the querier. Disregarded if viewing key - address pair is provided.",
+                                                        "anyOf": [
+                                                            {
+                                                                "$ref": "#/components/schemas/Permit_for_TokenPermissions"
+                                                            },
+                                                            {
+                                                                "type": "null"
+                                                            }
+                                                        ]
+                                                    },
+                                                    "start_page": {
+                                                        "description": "start page for the offsprings returned and listed (applies to both active and inactive). Default: 0",
+                                                        "default": null,
+                                                        "type": "integer",
+                                                        "format": "uint32",
+                                                        "minimum": 0.0,
+                                                        "nullable": true
+                                                    },
+                                                    "viewing_key": {
+                                                        "description": "viewing key",
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    },
+                                    {
+                                        "description": "lists all active collections in reverse chronological order",
+                                        "type": "object",
+                                        "required": [
+                                            "list_active_collections"
+                                        ],
+                                        "properties": {
+                                            "list_active_collections": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "page_size": {
+                                                        "description": "optional number of offspring to return in this page. Default: DEFAULT_PAGE_SIZE",
+                                                        "default": null,
+                                                        "type": "integer",
+                                                        "format": "uint32",
+                                                        "minimum": 0.0,
+                                                        "nullable": true
+                                                    },
+                                                    "start_page": {
+                                                        "description": "start page for the offsprings returned and listed. Default: 0",
+                                                        "default": null,
+                                                        "type": "integer",
+                                                        "format": "uint32",
+                                                        "minimum": 0.0,
+                                                        "nullable": true
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    },
+                                    {
+                                        "description": "lists inactive collections in reverse chronological order.",
+                                        "type": "object",
+                                        "required": [
+                                            "list_inactive_collections"
+                                        ],
+                                        "properties": {
+                                            "list_inactive_collections": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "page_size": {
+                                                        "description": "optional number of offspring to return in this page. Default: DEFAULT_PAGE_SIZE",
+                                                        "default": null,
+                                                        "type": "integer",
+                                                        "format": "uint32",
+                                                        "minimum": 0.0,
+                                                        "nullable": true
+                                                    },
+                                                    "start_page": {
+                                                        "description": "start page for the offsprings returned and listed. Default: 0",
+                                                        "default": null,
+                                                        "type": "integer",
+                                                        "format": "uint32",
+                                                        "minimum": 0.0,
+                                                        "nullable": true
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    },
+                                    {
+                                        "description": "authenticates the supplied address/viewing key. This should be called by offspring.",
+                                        "type": "object",
+                                        "required": [
+                                            "is_key_valid"
+                                        ],
+                                        "properties": {
+                                            "is_key_valid": {
+                                                "type": "object",
+                                                "required": [
+                                                    "address",
+                                                    "viewing_key"
+                                                ],
+                                                "properties": {
+                                                    "address": {
+                                                        "description": "address whose viewing key is being authenticated",
+                                                        "type": "string"
+                                                    },
+                                                    "viewing_key": {
+                                                        "description": "viewing key",
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    },
+                                    {
+                                        "description": "authenticates the supplied permit. This should be called by offspring.",
+                                        "type": "object",
+                                        "required": [
+                                            "is_permit_valid"
+                                        ],
+                                        "properties": {
+                                            "is_permit_valid": {
+                                                "type": "object",
+                                                "required": [
+                                                    "permit"
+                                                ],
+                                                "properties": {
+                                                    "permit": {
+                                                        "$ref": "#/components/schemas/Permit_for_TokenPermissions"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Message processed successfully"
+                    },
+                    "default": {
+                        "description": "An error occurred"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Binary": {
+                "description": "Binary is a wrapper around Vec<u8> to add base64 de/serialization with serde. It also adds some helper methods to help encode inline.\n\nThis is only needed as serde-json-{core,wasm} has a horrible encoding for Vec<u8>",
+                "type": "string"
+            },
+            "FilterTypes": {
+                "description": "the filter types when viewing an address' offspring",
+                "type": "string",
+                "enum": [
+                    "active",
+                    "inactive",
+                    "all"
+                ]
+            },
+            "PermitParams_for_TokenPermissions": {
+                "type": "object",
+                "required": [
+                    "allowed_tokens",
+                    "chain_id",
+                    "permissions",
+                    "permit_name"
+                ],
+                "properties": {
+                    "allowed_tokens": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_id": {
+                        "type": "string"
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TokenPermissions"
+                        }
+                    },
+                    "permit_name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PermitSignature": {
+                "type": "object",
+                "required": [
+                    "pub_key",
+                    "signature"
+                ],
+                "properties": {
+                    "pub_key": {
+                        "$ref": "#/components/schemas/PubKey"
+                    },
+                    "signature": {
+                        "$ref": "#/components/schemas/Binary"
+                    }
+                }
+            },
+            "Permit_for_TokenPermissions": {
+                "type": "object",
+                "required": [
+                    "params",
+                    "signature"
+                ],
+                "properties": {
+                    "params": {
+                        "$ref": "#/components/schemas/PermitParams_for_TokenPermissions"
+                    },
+                    "signature": {
+                        "$ref": "#/components/schemas/PermitSignature"
+                    }
+                }
+            },
+            "PubKey": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "value"
+                ],
+                "properties": {
+                    "type": {
+                        "description": "ignored, but must be \"tendermint/PubKeySecp256k1\" otherwise the verification will fail",
+                        "type": "string"
+                    },
+                    "value": {
+                        "description": "Secp256k1 PubKey",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Binary"
+                            }
+                        ]
+                    }
+                }
+            },
+            "TokenPermissions": {
+                "oneOf": [
+                    {
+                        "description": "Allowance for SNIP-20 - Permission to query allowance of the owner & spender",
+                        "type": "string",
+                        "enum": [
+                            "allowance"
+                        ]
+                    },
+                    {
+                        "description": "Balance for SNIP-20 - Permission to query balance",
+                        "type": "string",
+                        "enum": [
+                            "balance"
+                        ]
+                    },
+                    {
+                        "description": "History for SNIP-20 - Permission to query transfer_history & transaction_hisotry",
+                        "type": "string",
+                        "enum": [
+                            "history"
+                        ]
+                    },
+                    {
+                        "description": "Owner permission indicates that the bearer of this permit should be granted all the access of the creator/signer of the permit.  SNIP-721 uses this to grant viewing access to all data that the permit creator owns and is whitelisted for. For SNIP-721 use, a permit with Owner permission should NEVER be given to anyone else.  If someone wants to share private data, they should whitelist the address they want to share with via a SetWhitelistedApproval tx, and that address will view the data by creating their own permit with Owner permission",
+                        "type": "string",
+                        "enum": [
+                            "owner"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

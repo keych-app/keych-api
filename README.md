@@ -1,0 +1,1 @@
+Execute "run.sh" script, from ROOT folder
