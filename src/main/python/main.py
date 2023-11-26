@@ -95,7 +95,7 @@ RESTCLIENT_FOLDER = os.path.join(BUILD_FOLDER, 'rest-client')
 
 # Check for valid input folders
 for f in [ROOT_FOLDER, INPUT_FOLDER, BUILD_FOLDER]:
-    os.path.isdir(f)
+    assert os.path.isdir(f), f'Not a folder: {f}'
 # Setup output directories
 shutil.rmtree(BUILD_FOLDER)
 for d in [BUILD_FOLDER, OPENAPI_FOLDER, RESTCLIENT_FOLDER]:
