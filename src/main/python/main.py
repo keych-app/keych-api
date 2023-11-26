@@ -1,7 +1,8 @@
-import os, shutil
-import subprocess
 import json
-
+import os
+import shutil
+import subprocess
+import sys
 
 def update_refs(schema):  # $ref paths for OpenAPI
     if isinstance(schema, dict):
@@ -82,12 +83,19 @@ def json_to_openapi(json_schema):
     return openapi_schema
 
 
-ROOT_FOLDER = '.'  # TODO
+if len(sys.argv) != 2:
+    print("Root folder is missing. Please, provide it as command line argument")
+    sys.exit(1)
+
+ROOT_FOLDER = sys.argv[1]
 INPUT_FOLDER = os.path.join(ROOT_FOLDER, 'src', 'main', 'schema')
 BUILD_FOLDER = os.path.join(ROOT_FOLDER, 'build', 'src', 'main')
 OPENAPI_FOLDER = os.path.join(BUILD_FOLDER, 'openapi')
 RESTCLIENT_FOLDER = os.path.join(BUILD_FOLDER, 'rest-client')
 
+# Check for valid input folders
+for f in [ROOT_FOLDER, INPUT_FOLDER, BUILD_FOLDER]:
+    os.path.isdir(f)
 # Setup output directories
 shutil.rmtree(BUILD_FOLDER)
 for d in [BUILD_FOLDER, OPENAPI_FOLDER, RESTCLIENT_FOLDER]:
@@ -119,16 +127,17 @@ for folder_name in os.listdir(OPENAPI_FOLDER):
     if os.path.isdir(input_folder):
         for filename in os.listdir(input_folder):
             if filename.endswith('.yaml') or filename.endswith('.json'):
-                input_folder = os.path.join(input_folder, filename)
-                output_folderpath = os.path.join(RESTCLIENT_FOLDER, folder_name, filename.split('.')[0])  # TODO: assumes no "." into filenames
+                input_folderpath = os.path.join(input_folder, filename)
+                file_basename = '.'.join(filename.split('.')[:-1])  # TODO: maybe exist something similar from 3rd parties libs
+                output_folderpath = os.path.join(RESTCLIENT_FOLDER, folder_name, file_basename)
                 # OpenAPI Generator runs from Docker
                 cmd = [
                     'docker', 'run', '--rm',
-                    '-v', f'{BUILD_FOLDER}:/local',
+                    '-v', f'{BUILD_FOLDER.replace("\\", "/")}:/local',
                     'openapitools/openapi-generator-cli', 'generate',
-                    '-i', f'/local/{os.path.relpath(input_folder, BUILD_FOLDER)}',
+                    '-i', f'/local/{os.path.relpath(input_folderpath, BUILD_FOLDER).replace("\\", "/")}',
                     '-g', 'javascript',
-                    '-o', f'/local/{os.path.relpath(output_folderpath, BUILD_FOLDER)}'
+                    '-o', f'/local/{os.path.relpath(output_folderpath, BUILD_FOLDER).replace("\\", "/")}'
                 ]
                 # Run the command
                 subprocess.run(cmd, check=True)
